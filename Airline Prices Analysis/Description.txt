@@ -1,0 +1,34 @@
+This is a simple power bi report which uses the dataset on Airline prices in India from makemytrip and visualizes interesting insights.
+
+Data Source Reference: https://www.kaggle.com/datasets/andrewgeorgeissac/flight-price-data-of-indian-cities-makemytrip/data
+
+Operations Performed in Power Query:
+------------------------------------
+Appended flight details datasets into a master table.
+Text Transformation has been applied to create a field "trip" showing Departing City - Arrival City.
+Concatenated Departing date and time to create a field.
+Used Conditionals (if-then) and text split operations to add the duration time to departure time and created a new field - "Arrival Time".
+
+
+Operations performed in DAX:
+----------------------------
+Created a new column named "Hours" to show the departing hour for flight so that we can easily add it to a slicer and filter the flight details on the visuals.
+
+
+
+Visuals on Power BI Report:
+
+1. Clustered Column Chart has been used to show the maximum ticket prices of various airlines using both flight name & flight code. We can choose below slicers to filter the visuals
+      Flight Name
+      Combination of Arrival City - Departing City
+      Departure Hours
+      Date of Travel by Year, Month, Day
+
+      Tool Tips Used - Airline Flight, Maximum ticket price, Trip, Departing City, Arrival City
+
+2. Pie Chart shows the percentage of total number of trips made by each airline. We can choose below slicers to filter the visuals
+      Flight Name
+      Departing City
+      Arrival City
+      
+      Tool Tips Used - Airline, Total trips, Unique flights (flight codes), Minimum ticket price, maximum ticket price
