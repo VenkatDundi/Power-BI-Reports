@@ -1,0 +1,48 @@
+This is a simple Employee Surbey Analysis Report which shows some insights on the data gathered from employees working around the world. 
+
+Data Set Reference:   https://github.com/AlexTheAnalyst/Power-BI/blob/main/Power%20BI%20-%20Final%20Project.xlsx
+
+Thanks to Alex The Analyst!!
+
+
+Operations Performed in Power Query: 
+------------------------------------
+Note: (All the steps below are available in the .pbix file!!)
+
+1. Change the Column Type (Time Spent) to Duration
+
+#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Unique ID", type text}, {"Email", type text}, {"Date Taken (America/New_York)", type date}, {"Time Taken (America/New_York)", type time}, {"Browser", type text}, {"OS", type text}, {"City", type text}, {"Country", type text}, {"Referrer", type text}, {"Time Spent", type duration}, {"Q1 - Which Title Best Fits your Current Role?", type text}, {"Q2 - Did you switch careers into Data?", type text}, {"Q3 - Current Yearly Salary (in USD)", type text}, {"Q4 - What Industry do you work in?", type text}, {"Q5 - Favorite Programming Language", type text}, {"Q6 - How Happy are you in your Current Position with the following? (Salary)", Int64.Type}, {"Q6 - How Happy are you in your Current Position with the following? (Work/Life Balance)", Int64.Type}, {"Q6 - How Happy are you in your Current Position with the following? (Coworkers)", Int64.Type}, {"Q6 - How Happy are you in your Current Position with the following? (Management)", Int64.Type}, {"Q6 - How Happy are you in your Current Position with the following? (Upward Mobility)", Int64.Type}, {"Q6 - How Happy are you in your Current Position with the following? (Learning New Things)", Int64.Type}, {"Q7 - How difficult was it for you to break into Data?", type text}, {"Q8 - If you were to look for a new job today, what would be the most important thing to you?", type text}, {"Q9 - Male/Female?", type text}, {"Q10 - Current Age", Int64.Type}, {"Q11 - Which Country do you live in?", type text}, {"Q12 - Highest Level of Education", type text}, {"Q13 - Ethnicity", type text}})
+
+2. Perform Column Removal and Reorder
+
+3. Clean the Column [#"Q1 - Which Title Best Fits your Current Role?"] using Text.StartWith & Text.Split functions as shown below
+
+#"Added Custom" = Table.AddColumn(#"Removed Columns", "Q1 - Title of Current Role", each if Text.StartsWith([#"Q1 - Which Title Best Fits your Current Role?"], "Other (Please Specify):") then (Text.Split([#"Q1 - Which Title Best Fits your Current Role?"], ":"){1}) else [#"Q1 - Which Title Best Fits your Current Role?"])
+
+4. Calculate the Average Annual Pay (in USD) for the given range of salary. (Example: 0-40K ---> 20K)
+    - Use Conditionals (if-else), Text.StartWith, Text.Split, Text.BeforeDelimiter and find the average and convert it to the Decimal type
+
+5. Clean the field [#"Q4 - What Industry do you work in?"], [#"Q5 - Favorite Programming Language"], [#"Q8 - If you were to look for a new job today, what would be the most important thing to you?"], [#"Q11 - Which Country do you live in?"], [#"Q13 - Ethnicity"] --- same as in step 3
+
+6. Replace the null values in Q12 - with "NA"
+
+7. Capitalize the values of fields using "Format" in Text Column menu, which helps in reducing the number of duplicates for the field
+
+8. Remove unused columns and reorder
+
+
+Visualizations:
+---------------
+
+1. Card represents the "Count of Employees" using the unique id
+2. Card represents the "Average Annual Pay (in USD)" of Employees
+3. Gauge represents "Average Age" of Employees 
+4. Slicers Used:  "Gender" & "Country"
+5. Pie Chart represents "Average Annual Pay (in USD)" of Employees by Level of Highest Education using ToolTip ("Employee Count - Using Unique Id count")
+6. Stacked Bar Chart represents "Distinct Countries of Employees, interested in a particular Programming Language"
+7. Gauge plot represents the average score of happiness working with coworkers for employees
+8. Stacked Column Chart represents the average score of Work/Life Balance by Ethnic Group of Employees
+9. All these visuals update based on the slicers and selection of values from other charts
+
+Please review the Power Bi file and feel free to suggest any modifications.. Thank you!!
+
