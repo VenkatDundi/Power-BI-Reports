@@ -1,0 +1,67 @@
+As the pbix file size exceeded maximum limit due to large dataset file, it was not uploaded to the repository. Please find the below Power Query Script which works corresponding to the mentioned dataset in .csv format.
+
+
+Get Data > Text/Csv > Choose File > Transform Data > Advanced Editor
+
+Paste the below Power Query Script (Replace the Data Source with your corresponding file path) to complete the cleaning and transformation steps
+
+
+Power Query Script:
+-------------------
+
+
+
+
+let
+    Source = Csv.Document(File.Contents("E:\Portfolio\Power_BI\Exercises\Crime_Data_from_2020_to_Present.csv"),[Delimiter=",", Columns=28, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"DR_NO", Int64.Type}, {"Date Rptd", type datetime}, {"DATE OCC", type datetime}, {"TIME OCC", Int64.Type}, {"AREA", Int64.Type}, {"AREA NAME", type text}, {"Rpt Dist No", Int64.Type}, {"Part 1-2", Int64.Type}, {"Crm Cd", Int64.Type}, {"Crm Cd Desc", type text}, {"Mocodes", type text}, {"Vict Age", Int64.Type}, {"Vict Sex", type text}, {"Vict Descent", type text}, {"Premis Cd", Int64.Type}, {"Premis Desc", type text}, {"Weapon Used Cd", Int64.Type}, {"Weapon Desc", type text}, {"Status", type text}, {"Status Desc", type text}, {"Crm Cd 1", Int64.Type}, {"Crm Cd 2", Int64.Type}, {"Crm Cd 3", type text}, {"Crm Cd 4", type text}, {"LOCATION", type text}, {"Cross Street", type text}, {"LAT", type number}, {"LON", type number}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Rpt Dist No", "Reported Dist No"}, {"Crm Cd", "Crime Committed"}, {"Vict Age", "Victim Age"}, {"Vict Sex", "Victim Sex"}, {"Vict Descent", "Victim Descent"}, {"Premis Cd", "Premises Committed"}, {"Weapon Desc", "Weapon Description"}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"Crm Cd 1", "Crm Cd 2", "Crm Cd 3", "Crm Cd 4"}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns",{{"TIME OCC", type text}}),
+    #"Added Custom" = Table.AddColumn(#"Changed Type1", "Time Occured", each if Text.Length([TIME OCC])=4 then 
+
+Text.Start([TIME OCC],2) & ":" & Text.End([TIME OCC],2)
+
+else if Text.Length([TIME OCC])=3 then
+
+Text.Start([TIME OCC],1) & ":" & Text.End([TIME OCC],2)
+
+else if Text.Length([TIME OCC])=2 then
+
+"00:" & Text.End([TIME OCC],2)
+
+else if Text.Length([TIME OCC])=1 then 
+
+"0" & Text.End([TIME OCC],2) & ":" & "00"
+
+else "NA"),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom",{{"Time Occured", type time}}),
+    #"Added Custom1" = Table.AddColumn(#"Changed Type2", "Date Occured", each DateTime.From(Text.From(DateTime.Date([DATE OCC])) & " " & Text.From([Time Occured]))),
+    #"Changed Type3" = Table.TransformColumnTypes(#"Added Custom1",{{"Date Occured", type datetime}}),
+    #"Removed Columns1" = Table.RemoveColumns(#"Changed Type3",{"DATE OCC", "TIME OCC"}),
+    #"Added Custom2" = Table.AddColumn(#"Removed Columns1", "Crime Description", each if Text.Contains([Crm Cd Desc], "(") then Text.BeforeDelimiter([Crm Cd Desc], "(")
+
+else if Text.StartsWith([Crm Cd Desc], "SODOMY") then "SODOMY/SEX VIOLENCE"
+
+else if Text.Contains([Crm Cd Desc], "LEWD") then "LEWD LETTERS/CALLS"
+
+else [Crm Cd Desc]),
+    #"Added Custom3" = Table.AddColumn(#"Added Custom2", "Premises Description", each if Text.Contains([Premis Desc], "(") then Text.BeforeDelimiter([Premis Desc], "(") 
+else if Text.EndsWith([Premis Desc], "*") then Text.BeforeDelimiter([Premis Desc], "*")
+else [Premis Desc]),
+
+    #"Replaced Value" = Table.ReplaceValue(#"Added Custom3","","NA",Replacer.ReplaceValue,{"Weapon Description"}),
+    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","UNKNOWN WEAPON/OTHER WEAPON","UNKNOWN",Replacer.ReplaceText,{"Weapon Description"}),
+    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","STRONG-ARM (HANDS, FIST, FEET OR BODILY FORCE)","STRONG-ARM",Replacer.ReplaceText,{"Weapon Description"}),
+    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value2","","NA",Replacer.ReplaceValue,{"Cross Street"}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Replaced Value3",{"DR_NO", "Date Rptd", "Date Occured", "Time Occured", "AREA", "AREA NAME", "Reported Dist No", "Part 1-2", "Crime Committed", "Crm Cd Desc", "Mocodes", "Victim Age", "Victim Sex", "Victim Descent", "Premises Committed", "Premis Desc", "Weapon Used Cd", "Weapon Description", "Status", "Status Desc", "LOCATION", "Cross Street", "LAT", "LON", "Crime Description", "Premises Description"}),
+    #"Removed Columns2" = Table.RemoveColumns(#"Reordered Columns",{"Crm Cd Desc", "Premis Desc"}),
+    #"Reordered Columns1" = Table.ReorderColumns(#"Removed Columns2",{"DR_NO", "Date Rptd", "Date Occured", "Time Occured", "AREA", "AREA NAME", "Reported Dist No", "Part 1-2", "Crime Committed", "Crime Description", "Mocodes", "Victim Age", "Victim Sex", "Victim Descent", "Premises Committed", "Premises Description", "Weapon Used Cd", "Weapon Description", "Status", "Status Desc", "LOCATION", "Cross Street", "LAT", "LON"}),
+    #"Replaced Value4" = Table.ReplaceValue(#"Reordered Columns1","","NA",Replacer.ReplaceValue,{"Victim Descent"}),
+    #"Changed Type4" = Table.TransformColumnTypes(#"Replaced Value4",{{"Time Occured", type time}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type4", each ([Victim Age] <> -3 and [Victim Age] <> -2 and [Victim Age] <> -1)),
+    #"Replaced Value5" = Table.ReplaceValue(#"Filtered Rows","","-",Replacer.ReplaceValue,{"Victim Sex"}),
+    #"Replaced Value6" = Table.ReplaceValue(#"Replaced Value5","","NA",Replacer.ReplaceValue,{"Premises Description"})
+in
+    #"Replaced Value6"
