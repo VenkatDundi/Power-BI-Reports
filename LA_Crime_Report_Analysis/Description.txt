@@ -1,0 +1,57 @@
+This is a simple report on crime data published by LA City Police Department for record between 2020 and 2024 for public use.
+
+Dataset Reference : https://catalog.data.gov/dataset/crime-data-from-2020-to-present 
+
+This dataset is around 250 MB with more than 879K records. It would take few seconds to load the data into the model and thus presents the Visuals. 
+
+The dataset contains many fields which specify details like unique record number, crime reported, occured date and time, weapon used, victim details.. We can go through some visual insights upon cleaning and tranformation of the raw dataset.
+
+
+
+Operations performed in Power Query:
+------------------------------------
+1. Change the data type of required fields
+2. Remove and Reoder columns
+3. Created a new field to capture crime occured timestamp from raw text (If Example - 2230, 400, 50, 6). Used conditionals (if-else), Text transformation functions to extarct the required numbers and included (:) and 0 to convert it to time and append it to the crime occured date.
+
+        if Text.Length([TIME OCC])=4 then 
+        
+        Text.Start([TIME OCC],2) & ":" & Text.End([TIME OCC],2)
+        
+        else if Text.Length([TIME OCC])=3 then
+        
+        Text.Start([TIME OCC],1) & ":" & Text.End([TIME OCC],2)
+        
+        else if Text.Length([TIME OCC])=2 then
+        
+        "00:" & Text.End([TIME OCC],2)
+        
+        else if Text.Length([TIME OCC])=1 then 
+        
+        "0" & Text.End([TIME OCC],2) & ":" & "00"
+        
+        else "NA"
+4. New field has been converted to "time" data type and then appended to the actual date as text. Finally, the complete text has been converted to the date time type.
+5. Created a new field to specify the "Crime Description" by removing the excess details from the raw dataset file. Used Text.BeforeDelimiter to extract the required text from the field.
+
+       if Text.Contains([Crm Cd Desc], "(") then Text.BeforeDelimiter([Crm Cd Desc], "(")
+6. Empty Values of "Weapon Description", "Cross Street" have been replaced with "NA" on the same field
+7. Some values of fields are replaced by respective values
+8. Negative Values of "Victic Age" have been discarded from the dataset as they doesn't add any value to the insights
+9. "Victim Gender", "Premises Description" fields have been used to replace empty values
+
+
+Visualization:
+--------------
+1. Created a new Card template using which Total number of Cases (Using Unique Record Number), Unique Areas affected by crime, number of unique weapons can be represented
+2. Slicers - "Date Occured", "Case Status" has been used to filter the visuals based on these values selection
+3. Donut Chart has been used to represent the number of crimes committed on victims by gender [Legend - Victim Gender]
+4. Gauge View has been considered to represent the average victim age lying maximum and minimum age values
+5. Stacked colum chart represents the number of cases based on the area of the city [Legend - City]
+6. Pie Chart with number of victims based on 2 parts of the city has been used.
+7. Finally, stacked bar chart is used to represent the number of crimes for each type of crime description which has been committed in the city
+
+Note:
+----
+1. Used "Edit Interactions" to restrict the filters which are being applied on all the visuals in the same page. This was accomplished by disabling the respective visual from being filtered
+2. Canvas page dimensions were custom specified to create a page required for creation of report
