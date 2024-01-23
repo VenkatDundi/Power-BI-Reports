@@ -1,0 +1,38 @@
+This is a simple report on Electric Vehicles which are registered through Washington State Department of Licensing. This dataset has been meant for public use.
+
+Dataset Reference: https://catalog.data.gov/dataset/electric-vehicle-population-data
+
+The datset contains details of Vehicle ID Number, City, State, Electric Range, Electric Utility and so on.
+
+
+Operations performed in Power Query:
+------------------------------------
+1. Performed the data cleaning by analysing null and empty values for field in the dataset
+2. Used conditionals (if-else) to format the values of "Electric Vehicle Type" field
+3. Used conditionals (if-else) to specify the values of "CAVF Eligibility for Electric Vehicles
+4. Used "Electric Utility" field which contains values separated by ("||") & ("|") - It specifies multiple EU service facilities for each Electric Vehicle. Below tranformation has been applied to count the number of EU facilities available for each vechicle.
+
+    As values of field are separated by different character literals, values are replaced such that the field value contains same delimiter. Then, Text transformation has been applied to count the occurrences of delimiter and specified that number of EU facilities.
+
+    #"Replaced Value1" = Table.ReplaceValue(#"Added Custom1","||","|",Replacer.ReplaceText,{"Electric Utility"}),
+    #"Added Custom2" = Table.AddColumn(#"Replaced Value1", "EU Count", each List.Count(Text.PositionOfAny([Electric Utility],{"|"},Occurrence.All)) + 1)
+5. Rename, Reorder, Remove certain columns.
+6. Considered the usecase of capturing all the Electric Utility facilities for all vehicles in the table and creating a separate list.
+
+    Convert this field "Electric Utility" as a separate list and then convert it into a table
+
+    - Replace different special characters to same type
+    #"Replaced Value1" = Table.ReplaceValue(#"Converted to Table","||","|",Replacer.ReplaceText,{"Column1"}),
+
+    - Split the column using the delimiter
+    #"Split Column by Delimiter" = Table.SplitColumn(#"Replaced Value1", "Column1", Splitter.SplitTextByDelimiter("|", QuoteStyle.Csv), {"Column1.1", "Column1.2", "Column1.3", "Column1.4"}),
+
+    - As there exists maximum of 4 EU facilities, it split into 4 columns. Consider converting each field of the table into a list and then combine them together to form a final list of facilities which contains duplicates and null values.
+    Final_List_EU = List.Combine({#"Split Column by Delimiter"[Column1.1], #"Split Column by Delimiter"[Column1.2], #"Split Column by Delimiter"[Column1.3], #"Split Column by Delimiter"[Column1.4]}),
+
+    Now, remove duplicates and null values to get the finalized list of facilities accessible to EV in the dataset.
+    #"Removed Duplicates1" = List.Distinct(Final_List_EU)
+
+
+
+Note: As many vehicles (Around 84K) didn't have the details of (Sticker Price, Electric Range) [Mentioned as 0], those values(0) have been excluded for respective bar,column chart visuals.
