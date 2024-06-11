@@ -1,0 +1,59 @@
+This is a simple report on meteorite landings data provided by The Meteorite Society, and NASA.
+
+Dataset Reference : https://catalog.data.gov/dataset/meteorite-landings
+
+* Objective of this report is to demonstrate the usage of python scripting to perform various cleaning, transformation operations on any dataset using modules like Pandas.  
+
+
+This dataset consists of around 45.7k records with fields like Meteorite name, id, class, latitude, longitude, mass, geo location, year and so on.
+
+Importing Modules:
+------------------
+from geopy.geocoders import Nominatim
+from googletrans import Translator
+
+Operations performed:
+---------------------
+
+1. Download the dataset (.csv)
+2. Convert to a dataframe with name, id, latitude, loingitude
+3. Perform cleaning operation by removing Null values, reset index and so on
+4. Use Nominatim to reverse geo locate the addresses of meteor landings
+5. As the API is open source, we need to make sure to avoid hitting the API with multiple requests.
+6. Use google translator to convert the language to English
+7. Create a dataframe with new addresses extracted using Nominatim
+8. Print the dataframe with required fields
+
+In Power BI Desktop Application, go to "Get Data", search for "Python Script" and use the script for above process. Make sure to print only the required dataframe as the corresponding data will be loaded into Power BI model.
+
+* Load the actual dataset with 45.7K records
+* Load the transformed data set with addresses for 100 records
+* Merge Queries using the id and extract all required fields including Address into the model
+* Split the address by white space character and locate the country
+
+Example Power Query:
+
+if List.Last([Custom], -1) = "20276" then "Corsica"
+  else if List.Last([Custom], -1) = "States"
+  or List.Last([Custom], -1) = "Kingdom" 
+  or List.Last([Custom], -1) = "Africa"
+  or List.Last([Custom], -1) = "Buoy"
+then 
+  List.LastN([Custom], 2){0} &" "& List.LastN([Custom], 2){1}else if Value.Is(Value.FromText(List.Last([Custom], -1)), type number) 
+  then
+  List.LastN([Custom], 2){0}
+else
+  List.Last([Custom], -1)
+
+
+Visualization:
+--------------
+1. Used a table to present the details of 100 records of meteor landings along with addresses.
+2. Used a Map to demonstrate the location of landings all over the world.
+3. Used a slicer to filter the visuals by Country/Location, which is a transformed calculated column from address.
+4. On the other page of report, Cards were used to show the number of unique meteor classes, average meteor weight.
+5. Pie chart has been used to highlight the fall status of meteors.
+6. Slicers have been provided to filter based on year, Geo Location.
+7. Stacked column chart has been used to visualize number of meteors by their class and stacked column chart for presenting number of meteors by type.
+
+Please review, and share your views and feel free to suggest any modifications for improvements.. Thank you!!
