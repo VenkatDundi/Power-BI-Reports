@@ -1,6 +1,10 @@
 # Power-BI-Reports
 Power BI Reports on various use cases
 
+Use Case on Meteorite Landings Data
+
+![Meteorite_Landings_Sample](https://github.com/VenkatDundi/Power-BI-Reports/blob/main/Meteorite_Landings/Sample_Records_100.png)  
+
 Use Case on Electric Vehicles Data
 
 ![EV_Report](https://github.com/VenkatDundi/Power-BI-Reports/assets/59659900/8ba214ad-4e29-4e98-af1f-12c8282aace0)
