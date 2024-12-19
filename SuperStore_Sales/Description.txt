@@ -1,0 +1,65 @@
+This is a simple report on Superstore Sales data extracted from Kaggle
+
+Dataset Reference : https://www.kaggle.com/code/aaronlikevis/superstore-data-visualization-with-power-bi/input
+
+This report is focused on usage of measures and various DAX calculations on the sample dataset. It consists of 2 sheets - Orders (5899 Rows, 19 Columns) & Returns (800 Rows & 2 Columns)
+
+
+Operations performed in Power Query:
+------------------------------------
+1. Change the data type of required fields
+2. Remove and Reoder columns
+3. Added custom columns to differentiate "Profit", "Loss", "Break Even"
+4. Custom column - "Production Cost", calculated using the available data fields
+5. Added custom column - "Profit Percentage" & "Loss Percentage", calculated using available fields
+6. Change respective data types
+
+
+
+DAX Calculations:
+-----------------
+* Calculated Tables: For "users in 2019", "Grouping sales by region and product name", "Customers ordered a single product"
+* Measures:
+
+Top 3 customers with max Profit
+Top 3 customers contributed to max Loss
+Top 4 customers by Sale value
+Sales % contribution for each customer
+Average Sale per customer
+Customers who only ordered a single product
+Unique customers who contributed to Loss
+Repeated customers from 2019 to 2020
+Total new customers in 2020
+Total Returns
+Region Sale contribution
+Sales % by region contributed to Loss
+Returns % by region
+Top 3 profitable products
+Top 3 product Loss
+Top Break Even products
+Product Profit %
+Top 5 product sale contribution
+Distinct products
+Distinct Orders
+Inventory count        
+Total Returned products
+Total returned Orders
+Calculated column to extract YEAR from ORDER ID
+Return Orders Contribution by country
+
+
+
+
+Visualization:
+--------------
+* Used New Card design to display values
+* Used slciers for state, Region, City, Date to filter the report
+* Used buttons to navigate to different pages in the report 
+* Used bar charts to present the sales by each quarter
+* Used Pie chart to present the customers by YEAR
+* Used MATRIX to visualise the measure with corresponding fields
+
+Note:
+----
+1. Used "Edit Interactions" to restrict the filters which are being applied on some of the visuals in the same page. This was accomplished by disabling the respective visual from being filtered
+2. Canvas page dimensions were custom specified to create a page required for creation of report
