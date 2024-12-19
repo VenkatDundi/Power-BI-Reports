@@ -1,6 +1,10 @@
 # Power-BI-Reports
 Power BI Reports on various use cases
 
+Use case on Super Store Sales Data
+
+![SuperStore_Sales](https://github.com/VenkatDundi/Power-BI-Reports/blob/main/SuperStore_Sales/Home.png)
+
 Use Case on Meteorite Landings Data
 
 ![Meteorite_Landings_Sample](https://github.com/VenkatDundi/Power-BI-Reports/blob/main/Meteorite_Landings/Sample_Records_100.png)  
